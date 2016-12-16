@@ -1,0 +1,17 @@
+{>"./layout" /}
+
+{<title}404{/title}
+
+{<body}
+<div class="middle-box text-center animated fadeInDown">
+    <h1>404</h1>
+    <h3 class="font-bold">找不到网页</h3>
+
+    <div class="error-desc">
+        对不起，网页地址未找到。请核实您的URL地址，或者点击按钮回到首页
+        <form class="form-inline m-t" role="form">
+            <a type="button" href="/" class="btn btn-primary">返回首页</a>
+        </form>
+    </div>
+</div>
+{/body}

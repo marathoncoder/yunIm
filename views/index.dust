@@ -1,0 +1,173 @@
+{>"./layout" /}
+
+{<body}
+<div id="loginbox">
+    <div style="width:260px;margin:10px auto;" id="user-login">
+        请先输入你在聊天室的昵称
+        <span class="input-group input-group-sm">
+            <input type="text" class="form-control" placeholder="请输入用户名" id="username" name="username"/>
+            <span class="input-group-btn"><button type="button" class="btn btn-primary" id="login-in"/>提交</button></span>
+        </div>
+    </div>
+</div>
+<div class="small-chat-box fadeInRight animated active">
+
+<div class="heading" draggable="true">
+    <small class="chat-date pull-right">
+        当前在线人数: <span id="online-count" style="padding-right: 10px;"></span> <span id="today"></span>
+    </small>
+    在线客服
+</div>
+
+<div class="slimScrollDiv" style="position: relative; overflow: hidden;">
+    <div class="content" style="overflow-y:scroll;" id="chat-main"></div>
+</div>
+<div class="form-chat">
+    <div class="chat-btns p-relative">
+        <i class="fa fa-paperclip fa-lg" aria-hidden="true"></i>
+        <i class="fa fa-smile-o fa-lg" aria-hidden="true" id="emoji-face"></i>
+        <i class="fa fa-image fa-lg" aria-hidden="true"></i>
+        <div class="emojstext">{emoji|s}</div>
+    </div>
+    <div class="msg-area">
+        <textarea class="form-control msg-talk" id="message"></textarea>
+        <button class="btn btn-primary" type="button" id="send-msg" style="display: none;">发送</button>
+    </div>
+</div>
+
+</div>
+
+{<footer}
+<script src="/socket.io/socket.io.js"></script>
+<script>
+(function(){
+    var chat = {
+        userName:null,
+        userId: null,
+        genUid:function(){
+            return new Date().getTime()+""+Math.floor(Math.random()*899+100);
+        },
+        scrollToBottom: function(){
+            var height = $('#chat-main').height() + $('#chat-main').scrollTop();
+            $('#chat-main').scrollTop(height);
+        },
+        updateSysMsg: function(socketObj, action){
+            var self = this;
+            /*当前在线用户列表*/
+            var onlineUsers = socketObj.userName;
+            /*当前在线人数*/
+            var onlineCount = socketObj.onlineCount;
+            /*新加入用户的信息*/
+            var user = socketObj.user;
+
+            /*更新在线人数*/
+            $('#online-count').html(onlineCount);
+
+            /*添加系统消息*/
+            var html = '<div class="sys-msg">';
+            html += user.userName;
+            html += (action == 'login') ? ' 加入了聊天室' : ' 退出了聊天室';
+            html += '</div>';
+            $('#chat-main').append(html);
+            self.scrollToBottom();
+        },
+        submitMsg: function(socket){
+            var self = this;
+            var content = $('#message').val();
+            var obj = {};
+            if(self.userId == null){
+                return false;
+            }
+            if(content !== ''){
+                obj.userName = self.userName;
+                obj.userId = self.userId;
+                obj.content = content;
+            }else{
+                return false;
+            }
+            socket.emit('message', obj);
+            $('#message').val('');
+        },
+        init: function(){
+            var socket = io.connect('http://localhost:8080');
+            var self = this;
+            $('#chat-main').height( $(window).height() - 216);
+
+            $('#today').html(moment().format('YYYY.MM.DD'));
+
+            $('#emoji-face').on('click',function(){
+                $('.emojstext').show();
+            });
+
+            $(document).on('click','.emojstext',function(e){
+                $('.emojstext').hide();
+            });
+
+            /*登入*/
+            $('#login-in').click(function(){
+                var userName = $('#username').val();
+                if(userName == ''){
+                    return false;
+                }
+                self.userName  = userName;
+                $('#user-login').hide();
+
+                self.userId = self.genUid();
+                /*告诉服务器端有用户登录*/
+                socket.emit('login',{userName: self.userName,userId: self.userId});
+            });
+            /*发送消息*/
+            $('#send-msg').on('click',function(){
+                self.submitMsg(socket);
+            });
+
+            /*监听新用户登录*/
+            socket.on('login', function(o){
+                self.updateSysMsg(o,'login');
+            });
+            /*监听新用户退出*/
+            socket.on('logout', function(o){
+                self.updateSysMsg(o,'logout');
+            });
+            /*监听消息发送*/
+            socket.on('message', function(obj){
+                var isme = (obj.userId == self.userId) ? true : false;
+                var contentDiv = '<div class="chat-message'+ (isme ? ' active' : '')+'">'+jEmoji.unifiedToHTML(obj.content)+'</div>';
+                var usernameDiv = '<div class="author-name">'+obj.userName+'<small class="chat-date"> '+moment().format('mm:ss a')+' </small> </div>';
+
+                var section = $('<div></div>');
+                if(!isme){
+                    section.addClass('left');
+                    section.html(usernameDiv + contentDiv);
+                } else {
+                    section.addClass('right');
+                    section.html(usernameDiv + contentDiv);
+                }
+                $('#chat-main').append(section);
+                self.scrollToBottom();
+            });
+
+            $(document).on('keydown',function(e){
+                if(e.keyCode === 13){
+                    $('#send-msg').trigger('click');
+                }
+            });
+
+            $('.emoji').on('click',function(){
+                var emojiCode = $(this).attr('class').replace(/emoji emoji/g, '');
+                socket.emit('emoji',{emojiCode: emojiCode,userId:self.userId});
+            });
+
+            socket.on('emoji',function(obj){
+                var isme = (obj.userId == self.userId) ? true : false;
+                if(isme) {
+                    $('#message').val($('#message').val() + obj.text);
+                }
+            });
+        }
+    };
+    chat.init();
+})();
+</script>
+{/footer}
+{/body}

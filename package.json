@@ -1,10 +1,11 @@
 {
-  "name": "在线客服",
+  "name": "onlineIM",
   "version": "1.0.0",
   "description": "在线客服系统、在线webIM,聊天室",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
   },
   "repository": {
     "type": "git",
@@ -17,7 +18,12 @@
   },
   "homepage": "https://github.com/marathoncoder/yunIm#readme",
   "dependencies": {
+    "adaro": "^1.0.4",
+    "body-parser": "^1.15.2",
+    "emoji": "^0.3.2",
     "express": "^4.14.0",
+    "morgan": "^1.7.0",
     "socket.io": "^1.7.1"
-  }
+  },
+  "devDependencies": {}
 }

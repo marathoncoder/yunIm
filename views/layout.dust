@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>{+title}Web IM{/title}</title>
+    <link rel="stylesheet" href="/js/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/js/lib/font-awesome/css/font-awesome.min.css" />
+    <link href="/css/emoji.css" rel="stylesheet" type="text/css" />
+    <link href="/css/animate.css" rel="stylesheet"/>
+    <link href="/css/style.css" rel="stylesheet"/>
+    {+style}{/style}
+    <script src="/js/lib/jquery/dist/jquery.min.js"></script>
+    <script src="/js/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/js/lib/moment/min/moment.min.js"></script>
+    <script src="/js/emoji.js"></script>
+    {+script}{/script}
+</head>
+<body class="gray-bg">
+<div class="container-full">
+    <!-- header -->
+    {>"./header" /}
+
+    <!-- body -->
+    {+body}{/body}
+
+    <!-- footer -->
+    {+footer}{/footer}
+</div>
+</body>
+</html>

@@ -1,0 +1,24 @@
+{
+  "name": "kqc_ui",
+  "homepage": "https://github.com/marathoncoder/kqc_ui",
+  "authors": [
+    "hwlweb@163.com"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "js/lib/",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "^3.1.1",
+    "font-awesome": "^4.7.0",
+    "bootstrap": "^3.3.7",
+    "moment": "^2.17.1"
+  }
+}
